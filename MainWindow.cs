@@ -31,15 +31,18 @@ public partial class MainWindow: Gtk.Window
 		PASS_GEN.initialize(IS_UPPER_CASED,IS_LOWER_CASED,IS_SYMBOLS_CHECKED,IS_NUMBERS_CHECKED,WORD_COUNT);
 
 		for(int i = 0; i<PASS_COUNT; i++){
-			String result = PASS_GEN.getSequence();
-
-			if (result != null) {
-				pass_view.Buffer.Text = result;
-				Console.Write("Result: "+result);
-			} else {
-				MessageDialog md = new MessageDialog (null, DialogFlags.Modal, MessageType.Info, ButtonsType.Ok, "Null");
-				md.Run ();
-				md.Destroy();
+			String result = "";
+			try{
+					result = PASS_GEN.getSequence();
+			}finally{
+				if (result != null) {
+					pass_view.Buffer.Text = result;
+					Console.Write ("Result: " + result);
+				} else {
+					MessageDialog md = new MessageDialog (null, DialogFlags.Modal, MessageType.Info, ButtonsType.Ok, "Null");
+					md.Run ();
+					md.Destroy ();
+				}
 			}
 		}
 	}
@@ -67,7 +70,6 @@ public partial class MainWindow: Gtk.Window
 	{
 		
 		if (lower_chckbx.Active) {
-			Console.Write ("Clicked");
 			IS_LOWER_CASED = true;
 		} else {
 			IS_LOWER_CASED = false;
@@ -76,7 +78,7 @@ public partial class MainWindow: Gtk.Window
 
 	protected void onWordCountChanged (object sender, EventArgs e)
 	{
-		Console.Write("Changed");
+		
 		WORD_COUNT = Int32.Parse(word_count_spin.Text);
 		Console.Write(WORD_COUNT.ToString());
 	}
@@ -93,7 +95,7 @@ public partial class MainWindow: Gtk.Window
 
 	protected void numberChecked (object sender, EventArgs e)
 	{
-		Console.Write("Clicked");
+		;
 		if (number_chckbx.Active) {
 			IS_NUMBERS_CHECKED = true;
 		} else {
@@ -103,7 +105,7 @@ public partial class MainWindow: Gtk.Window
 
 	protected void saveOnClick (object sender, EventArgs e)
 	{
-		throw new NotImplementedException ();
+		
 	}
 
 	protected void viewAboutOnClick (object sender, EventArgs e)

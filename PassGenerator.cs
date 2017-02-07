@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PassGen
 {
@@ -12,8 +13,7 @@ namespace PassGen
 		private int WORD_COUNT = 0;
 		private Random random = new Random();
 		private int LENG = 0;
-
-		protected LinkedList<char> WORD_DIC = new LinkedList<char>();
+		protected C5.ArrayList<char> WORD_DIC = new C5.ArrayList<char>();
 
 		public void initialize(Boolean IS_UPPER_CASED,Boolean IS_LOWER_CASED,Boolean IS_SYMBOLS_CHECKED, Boolean IS_NUMBER_CHECKED,int word_count){
 			this.IS_UPPER_CASE = IS_UPPER_CASED;
@@ -31,8 +31,8 @@ namespace PassGen
 			String result = "";
 
 			int next = 0;
-			String lowerString = "abcdefghijklmnopqrstuvwxyz";
-			String upperString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			String lowerString = "abcdefghijklmnopqrstuvwxyząćęłśóżź";
+			String upperString = "ABCDEFGHIJKLMNOPQRSTUVWXYZĄĆĘŁŚÓŻŹ";
 			String numberString = "1234567890";
 			String symbolString = "`~!#$%^&*()-_=+[{]};:,<.>?";
 			String combinedStrings = "";
@@ -54,54 +54,66 @@ namespace PassGen
 				combinedStrings += numberString;
 			} 
 
-			LENG = combinedStrings.Length;
-			for(int i = 0; i<WORD_COUNT; i++){
-				next = random.Next(combinedStrings.Length);
-				char[] array = combinedStrings.ToCharArray();
-				char next_char = array[next];
+			LENG = combinedStrings.Length-1;
 
-					if (checkIfDictionaryContains(next_char)) {
-						int other = random.Next ((int)(next_char/getIntValue(next)));
-					    Console.Write(next_char);
-						char to_add = combinedStrings[other];
-						WORD_DIC.AddLast(to_add);
-						result = result + to_add.ToString();
-					} else {
-						WORD_DIC.AddLast(next_char);
-						result = result + next_char.ToString();
-				}
-				
-
-			}
-			return result;
-		}
-
-		protected int getIntValue(int rand){
-			int result = 0;
-			if (rand < LENG|rand == LENG) {
-				int min = LENG - rand;
-				int half = LENG / 2;
-
-				if (min > half) {
-					result = random.Next(half,min);
+			//Console.Write(WORD_COUNT);
+			    char[] array = combinedStrings.ToCharArray();
+				for(int i = 0; i<WORD_COUNT; i++){
+				char next_char;
+				if (combinedStrings.Length > 0) {
+					next = random.Next(combinedStrings.Length);
+					next_char = array[next];
+	
+						result += getRandom(combinedStrings);
+					
 				} else {
-					result = random.Next(min, LENG);
+					next = random.Next(0,127);
+					next_char = (char)next;
+					result += next_char;
+				}	
 				}
-			} else {
-				result = rand / LENG;
-			
-			}
-			Console.Write(result+"\n");
 			return result;
 		}
 
-		protected Boolean checkIfDictionaryContains(char character){
-			Boolean if_contains = false;
-
-			if(WORD_DIC.Contains(character)){
-				if_contains = true;
+		protected String getRandom (string combinedStrings)
+		{
+			int rand = random.Next(0,combinedStrings.Length);
+			string result = combinedStrings[rand].ToString();
+			char c = combinedStrings[rand];
+			while(true){
+				if (WORD_DIC.FindOrAdd (ref c)) {
+					break;
+				} 
 			}
-			return if_contains;
+			return  result;
+		}
+
+		private int findMinValue(){
+			int? minVal = null; //nullable so this works even if you have all super-low negatives
+			int index = -1;
+			char[] array = WORD_DIC.ToArray();
+
+			for (int i = 0; i <array.Length; i++)
+			{
+				int thisNum = array[i];
+				if (!minVal.HasValue || thisNum < minVal.Value)
+				{
+					minVal = thisNum;
+					index = i;
+				}
+			}
+			return (int)minVal;
+		}
+
+		private string reverse(string s)
+		{
+			char[] charArray = s.ToCharArray();
+			Array.Reverse( charArray );
+			return new string( charArray );
+		}
+	
+		private int convFloatToInt(float f){
+			return Int32.Parse(f.ToString().Split('.')[0]);
 		}
 	}
 }
