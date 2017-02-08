@@ -75,21 +75,40 @@ namespace PassGen
 			return result;
 		}
 
-		protected String getRandom (string combinedStrings)
+		protected String getRandom(string combinedStrings)
 		{
-			int rand = random.Next(0,combinedStrings.Length);
-			string result = combinedStrings[rand].ToString();
-			char c = combinedStrings[rand];
+			string result = "";
+			string rev = reverse(combinedStrings);
+			string cutted = cut(rev);
+
+			Console.Write (rev);
+			int it = 0;
+
 			while(true){
-				if (WORD_DIC.FindOrAdd (ref c)) {
-					break;
-				} 
+				if (it % 2 == 0) {
+					int rand = random.Next (0, combinedStrings.Length);
+					char c = cutted[rand];
+
+					if (WORD_DIC.FindOrAdd (ref c)) {
+						result = c.ToString();
+						break;
+					} 
+				} else {
+					int rand = random.Next (0, combinedStrings.Length);
+					char c = combinedStrings[rand];
+
+					if (WORD_DIC.FindOrAdd (ref c)) {
+						result = c.ToString();
+						break;
+					} 
+				}
+				it++;
 			}
 			return  result;
 		}
 
 		private int findMinValue(){
-			int? minVal = null; //nullable so this works even if you have all super-low negatives
+			int? minVal = null; 
 			int index = -1;
 			char[] array = WORD_DIC.ToArray();
 
@@ -110,6 +129,12 @@ namespace PassGen
 			char[] charArray = s.ToCharArray();
 			Array.Reverse( charArray );
 			return new string( charArray );
+		}
+
+		private string cut(string to_cut){
+			string cut = to_cut.Substring(0,to_cut.Length/2);
+			string cut2 = to_cut.Substring (to_cut.Length / 2);
+			return cut2+cut;		
 		}
 	
 		private int convFloatToInt(float f){
