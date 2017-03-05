@@ -1,2 +1,2 @@
 # passgen
-Simple password generator based on char sequences and ASCII code.
+Simple password generator based on ASCII code, hexal and octal digit systems.
